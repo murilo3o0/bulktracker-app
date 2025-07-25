@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BulkTracker">
+    <title>BulkTracker - Acompanhe seu Bulking</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANcSURBVFiFtZdPaBNBFMafmSQmJjGxqFiLFrFYxYtYL4IXwYMXD3rwIHjw4MWLF0/ePHjx4sGDFw9ePHjx4MWLF0/ePHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9evHjx4sWLFy9e" sizes="32x32">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAA">"
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .app-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .content {
+            padding: 20px;
+            min-height: 60vh;
+            padding-bottom: 100px;
+        }
+
+        .meal-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .meal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .meal-time {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .meal-calories {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .meal-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .meal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-check {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-check.checked {
+            background: #45a049;
+            transform: scale(0.95);
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            min-width: 40px;
+        }
+
+        .add-meal-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .add-meal-btn:active {
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+        }
+
+        .btn-cancel {
+            background: #666;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+        }
+
+        .meal-checked {
+            opacity: 0.7;
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+        }
+
+        .meal-checked .meal-content {
+            text-decoration: line-through;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .settings-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .settings-item h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .bounce {
+            animation: bounce 0.6s;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 3000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state img {
+            width: 100px;
+            height: 100px;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .modal-content {
+                margin: 2% auto;
+                width: 95%;
+            }
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>🏋️ BulkTracker</h1>
+            <div class="stats-row">
+                <span>Meta: <span id="goalDisplay">3200</span> kcal</span>
+                <span id="consumedToday">Consumido: 0 kcal</span>
+                <span id="currentDate"></span>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('today')">Hoje</button>
+            <button class="nav-tab" onclick="showTab('meals')">Refeições</button>
+            <button class="nav-tab" onclick="showTab('settings')">Config</button>
+        </div>
+
+        <div id="today-tab" class="tab-content active">
+            <div class="content">
+                <div class="summary-card">
+                    <h3>Progresso de Hoje</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="calorieProgress" style="width: 0%">0%</div>
+                    </div>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="caloriesConsumed">0</span>
+                            <span class="stat-label">Calorias</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="proteinsConsumed">0g</span>
+                            <span class="stat-label">Proteínas</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="mealsCompleted">0/7</span>
+                            <span class="stat-label">Refeições</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="todayMeals">
+                    <!-- Refeições de hoje serão inseridas aqui -->
+                </div>
+            </div>
+        </div>
+
+        <div id="meals-tab" class="tab-content">
+            <div class="content">
+                <h3 style="margin-bottom: 15px;">Suas Refeições</h3>
+                <div id="customMeals">
+                    <!-- Refeições personalizadas serão inseridas aqui -->
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-tab" class="tab-content">
+            <div class="content">
+                <div class="settings-item">
+                    <h3>Notificações</h3>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notificationsToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <p style="margin-top: 10px; font-size: 14px; color: #666;">Receber lembretes das refeições</p>
+                </div>
+                
+                <div class="settings-item">
+                    <h3>Meta Diária</h3>
+                    <div class="form-group">
+                        <label>Calorias (kcal)</label>
+                        <input type="number" id="calorieGoal" value="3200" min="1000" max="5000">
+                    </div>
+                    <div class="form-group">
+                        <label>Proteínas (g)</label>
+                        <input type="number" id="proteinGoal" value="130" min="50" max="300">
+                    </div>
+                    <button class="btn btn-save" onclick="saveSettings()">Salvar Configurações</button>
+                </div>
+
+                <div class="settings-item">
+                    <h3>Dados do App</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                        Refeições cadastradas: <strong id="totalMeals">0</strong><br>
+                        Dias utilizando: <strong id="daysUsing">0</strong>
+                    </p>
+                    <button class="btn" style="background: #2196F3; color: white; margin-right: 10px;" onclick="exportData()">
+                        Exportar Dados
+                    </button>
+                    <button class="btn" style="background: #f44336; color: white;" onclick="resetAllData()">
+                        Resetar Dados
+                    </button>
+                </div>
+
+                <div class="settings-item">
+                    <h3>Sobre o App</h3>
+                    <p style="font-size: 14px; color: #666;">
+                        <strong>BulkTracker v1.0</strong><br>
+                        Desenvolvido para acompanhar seu plano de bulking de forma simples e eficiente.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <button class="add-meal-btn" onclick="openMealModal()">+</button>
+    </div>
+
+    <!-- Modal para adicionar/editar refeição -->
+    <div id="mealModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Adicionar Refeição</h3>
+            <form id="mealForm">
+                <div class="form-group">
+                    <label>Horário</label>
+                    <input type="time" id="mealTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Refeição</label>
+                    <input type="text" id="mealName" placeholder="Ex: Lanche da manhã" required>
+                </div>
+                <div class="form-group">
+                    <label>Ingredientes/Descrição</label>
+                    <textarea id="mealDescription" placeholder="Descreva os ingredientes e quantidades"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Calorias</label>
+                    <input type="number" id="mealCalories" placeholder="Ex: 400" required min="1" max="2000">
+                </div>
+                <div class="form-group">
+                    <label>Proteínas (g)</label>
+                    <input type="number" id="mealProteins" placeholder="Ex: 20" min="0" max="100">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-cancel" onclick="closeMealModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-save">
+                        <span id="saveButtonText">Salvar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Dados padrão baseados no PDF
+        const defaultMeals = [
+            {
+                time: "08:00",
+                name: "Lanche da manhã",
+                description: "2 fatias de pão de forma, 1 ovo, 1 colher (sopa) pasta de amendoim",
+                calories: 400,
+                proteins: 18
+            },
+            {
+                time: "11:30",
+                name: "Almoço",
+                description: "Arroz, feijão, carne, legumes",
+                calories: 800,
+                proteins: 35
+            },
+            {
+                time: "14:30",
+                name: "Shake pré-treino",
+                description: "1 scoop whey, 1 banana, 30g aveia, 1 colher (sopa) pasta de amendoim, 200ml leite",
+                calories: 600,
+                proteins: 30
+            },
+            {
+                time: "17:00",
+                name: "Pós-treino",
+                description: "2 fatias pão de forma, 100g frango desfiado, 1 banana",
+                calories: 400,
+                proteins: 25
+            },
+            {
+                time: "19:30",
+                name: "Jantar",
+                description: "Arroz, feijão, carne, legumes",
+                calories: 800,
+                proteins: 35
+            },
+            {
+                time: "21:30",
+                name: "Lanche da tarde",
+                description: "150g batata-doce cozida, 2 ovos mexidos",
+                calories: 350,
+                proteins: 15
+            },
+            {
+                time: "23:00",
+                name: "Ceia",
+                description: "200ml leite, 30g aveia, 1 colher (sopa) pasta de amendoim",
+                calories: 300,
+                proteins: 12
+            }
+        ];
+
+        let meals = [];
+        let dailyChecked = {};
+        let currentEditingIndex = -1;
+        let settings = {
+            calorieGoal: 3200,
+            proteinGoal: 130,
+            notifications: true
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            loadSettings();
+            updateCurrentDate();
+            renderTodayMeals();
+            renderCustomMeals();
+            updateProgress();
+            updateStats();
+            
+            // Registrar service worker para PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }).catch(function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            }
+            
+            // Verificar se pode instalar PWA
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPrompt();
+            });
+            
+            // Função para mostrar prompt de instalação
+            function showInstallPrompt() {
+                const installBanner = document.createElement('div');
+                installBanner.style.cssText = `
+                    position: fixed;
+                    bottom: 80px;
+                    left: 20px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    text-align: center;
+                    z-index: 1001;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                `;
+                installBanner.innerHTML = `
+                    <p style="margin: 0 0 10px 0; font-size: 14px;">📱 Instalar BulkTracker como app?</p>
+                    <button onclick="installPWA()" style="background: white; color: #4CAF50; border: none; padding: 8px 16px; border-radius: 20px; margin-right: 10px; cursor: pointer;">Instalar</button>
+                    <button onclick="this.parentElement.remove()" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 20px; cursor: pointer;">Agora não</button>
+                `;
+                document.body.appendChild(installBanner);
+                
+                window.installPWA = function() {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then((choiceResult) => {
+                            if (choiceResult.outcome === 'accepted') {
+                                showNotification('App instalado com sucesso! 🎉', 'success');
+                            }
+                            deferredPrompt = null;
+                        });
+                    }
+                    installBanner.remove();
+                };
+            }
+        });
+
+        function loadData() {
+            const savedMeals = localStorage.getItem('bulkTrackerMeals');
+            const savedChecked = localStorage.getItem('bulkTrackerChecked');
+            
+            if (savedMeals) {
+                meals = JSON.parse(savedMeals);
+            } else {
+                meals = [...defaultMeals];
+                saveData();
+            }
+
+            if (savedChecked) {
+                dailyChecked = JSON.parse(savedChecked);
+            }
+        }
+
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('bulkTrackerSettings');
+            if (savedSettings) {
+                settings = { ...settings, ...JSON.parse(savedSettings) };
+            }
+            
+            document.getElementById('calorieGoal').value = settings.calorieGoal;
+            document.getElementById('proteinGoal').value = settings.proteinGoal;
+            document.getElementById('notificationsToggle').checked = settings.notifications;
+            document.getElementById('goalDisplay').textContent = settings.calorieGoal;
+        }
+
+        function saveData() {
+            localStorage.setItem('bulkTrackerMeals', JSON.stringify(meals));
+            localStorage.setItem('bulkTrackerChecked', JSON.stringify(dailyChecked));
+        }
+
+        function saveSettings() {
+            settings.calorieGoal = parseInt(document.getElementById('calorieGoal').value);
+            settings.proteinGoal = parseInt(document.getElementById('proteinGoal').value);
+            settings.notifications = document.getElementById('notificationsToggle').checked;
+            
+            localStorage.setItem('bulkTrackerSettings', JSON.stringify(settings));
+            document.getElementById('goalDisplay').textContent = settings.calorieGoal;
+            
+            updateProgress();
+            showNotification('Configurações salvas com sucesso!', 'success');
+        }
+
+        function updateCurrentDate() {
+            const today = new Date();
+            const dateString = today.toLocaleDateString('pt-BR');
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        function getTodayKey() {
+            return new Date().toDateString();
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            if (tabName === 'settings') {
+                updateStats();
+            }
+        }
+
+        function renderTodayMeals() {
+            const container = document.getElementById('todayMeals');
+            const todayKey = getTodayKey();
+            
+            container.innerHTML = '';
+            
+            if (meals.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Nenhuma refeição cadastrada ainda.</p>
+                        <p>Toque no botão + para adicionar sua primeira refeição!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            meals.forEach((meal, index) => {
+                const isChecked = dailyChecked[todayKey] && dailyChecked[todayKey][index];
+                
+                const mealCard = document.createElement('div');
+                mealCard.className = `meal-card ${isChecked ? 'meal-checked' : ''}`;
+                
+                mealCard.innerHTML = `
+                    <div class="meal-header">
+                        <div class="meal-time">${meal.time} - ${meal.name}</div>
+                        <div class="meal-calories">${meal.calories} kcal</div>
+                    </div>
+                    <div class="meal-content">${meal.description}</div>
+                    <div class="meal-actions">
+                        <button class="btn btn-check ${isChecked ? 'checked' : ''}" onclick="toggleMealCheck(${index})">
+                            ${isChecked ? '✓ Feito' : 'Marcar'}
+                        </button>
+                        <button class="btn btn-edit" onclick="editMeal(${index})">Editar</button>
+                    </div>
+                `;
+                
+                container.appendChild(mealCard);
+            });
+        }
+
+        function renderCustomMeals() {
+            const container = document.getElementById('customMeals');
+            container.innerHTML = '';
+            
+            if (meals.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Nenhuma refeição cadastrada.</p>
+                        <p>Use o botão + para adicionar refeições personalizadas!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            meals.forEach((meal, index) => {
+                const mealCard = document.createElement('div');
+                mealCard.className = 'meal-card';
+                
+                mealCard.innerHTML = `
+                    <div class="meal-header">
+                        <div class="meal-time">${meal.time} - ${meal.name}</div>
+                        <div class="meal-calories">${meal.calories} kcal</div>
+                    </div>
+                    <div class="meal-content">${meal.description}</div>
+                    <div class="meal-actions">
+                        <button class="btn btn-edit" onclick="editMeal(${index})">Editar</button>
+                        <button class="btn" style="background: #f44336; color: white;" onclick="deleteMeal(${index})">Excluir</button>
+                    </div>
+                `;
+                
+                container.appendChild(mealCard);
+            });
+        }
+
+        function toggleMealCheck(index) {
+            const todayKey = getTodayKey();
+            
+            if (!dailyChecked[todayKey]) {
+                dailyChecked[todayKey] = {};
+            }
+            
+            dailyChecked[todayKey][index] = !dailyChecked[todayKey][index];
+            
+            saveData();
+            renderTodayMeals();
+            updateProgress();
+            
+            const isChecked = dailyChecked[todayKey][index];
+            const message = isChecked ? 'Refeição marcada como concluída! 🎉' : 'Refeição desmarcada';
+            showNotification(message, isChecked ? 'success' : 'info');
+            
+            // Animação de bounce
+            const btn = event.target;
+            btn.classList.add('bounce');
+            setTimeout(() => btn.classList.remove('bounce'), 600);
+        }
+
+        function updateProgress() {
+            const todayKey = getTodayKey();
+            let totalCalories = 0;
+            let totalProteins = 0;
+            let completedMeals = 0;
+            
+            meals.forEach((meal, index) => {
+                if (dailyChecked[todayKey] && dailyChecked[todayKey][index]) {
+                    totalCalories += meal.calories;
+                    totalProteins += meal.proteins;
+                    completedMeals++;
+                }
+            });
+            
+            const calorieGoal = settings.calorieGoal;
+            const progressPercent = Math.min((totalCalories / calorieGoal) * 100, 100);
+            
+            document.getElementById('calorieProgress').style.width = progressPercent + '%';
+            document.getElementById('calorieProgress').textContent = Math.round(progressPercent) + '%';
+            document.getElementById('caloriesConsumed').textContent = totalCalories;
+            document.getElementById('proteinsConsumed').textContent = totalProteins + 'g';
+            document.getElementById('mealsCompleted').textContent = `${completedMeals}/${meals.length}`;
+            document.getElementById('consumedToday').textContent = `Consumido: ${totalCalories} kcal`;
+        }
+
+        function updateStats() {
+            document.getElementById('totalMeals').textContent = meals.length;
+            
+            const daysCount = Object.keys(dailyChecked).length;
+            document.getElementById('daysUsing').textContent = daysCount;
+        }
+
+        function openMealModal(index = -1) {
+            currentEditingIndex = index;
+            const modal = document.getElementById('mealModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const saveButtonText = document.getElementById('saveButtonText');
+            
+            if (index >= 0) {
+                const meal = meals[index];
+                document.getElementById('mealTime').value = meal.time;
+                document.getElementById('mealName').value = meal.name;
+                document.getElementById('mealDescription').value = meal.description;
+                document.getElementById('mealCalories').value = meal.calories;
+                document.getElementById('mealProteins').value = meal.proteins;
+                modalTitle.textContent = 'Editar Refeição';
+                saveButtonText.textContent = 'Atualizar';
+            } else {
+                document.getElementById('mealForm').reset();
+                modalTitle.textContent = 'Adicionar Refeição';
+                saveButtonText.textContent = 'Salvar';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeMealModal() {
+            document.getElementById('mealModal').style.display = 'none';
+            currentEditingIndex = -1;
+        }
+
+        function editMeal(index) {
+            openMealModal(index);
+        }
+
+        function deleteMeal(index) {
+            if (confirm('Tem certeza que deseja excluir esta refeição?')) {
+                meals.splice(index, 1);
+                
+                // Reajustar índices do dailyChecked
+                const todayKey = getTodayKey();
+                if (dailyChecked[todayKey]) {
+                    const newChecked = {};
+                    Object.keys(dailyChecked[todayKey]).forEach(key => {
+                        const oldIndex = parseInt(key);
+                        if (oldIndex < index) {
+                            newChecked[oldIndex] = dailyChecked[todayKey][oldIndex];
+                        } else if (oldIndex > index) {
+                            newChecked[oldIndex - 1] = dailyChecked[todayKey][oldIndex];
+                        }
+                    });
+                    dailyChecked[todayKey] = newChecked;
+                }
+                
+                saveData();
+                renderTodayMeals();
+                renderCustomMeals();
+                updateProgress();
+                showNotification('Refeição excluída com sucesso', 'info');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function exportData() {
+            const data = {
+                meals: meals,
+                dailyChecked: dailyChecked,
+                settings: settings,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bulktracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Dados exportados com sucesso! 📁', 'success');
+        }
+
+        document.getElementById('mealForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const saveBtn = document.getElementById('saveButtonText');
+            const originalText = saveBtn.textContent;
+            saveBtn.innerHTML = '<div class="loading"></div>';
+            
+            setTimeout(() => {
+                const mealData = {
+                    time: document.getElementById('mealTime').value,
+                    name: document.getElementById('mealName').value,
+                    description: document.getElementById('mealDescription').value,
+                    calories: parseInt(document.getElementById('mealCalories').value),
+                    proteins: parseInt(document.getElementById('mealProteins').value) || 0
+                };
+                
+                if (currentEditingIndex >= 0) {
+                    meals[currentEditingIndex] = mealData;
+                    showNotification('Refeição atualizada com sucesso! ✏️', 'success');
+                } else {
+                    meals.push(mealData);
+                    showNotification('Nova refeição adicionada! 🎉', 'success');
+                }
+                
+                // Ordenar refeições por horário
+                meals.sort((a, b) => a.time.localeCompare(b.time));
+                
+                saveData();
+                renderTodayMeals();
+                renderCustomMeals();
+                updateProgress();
+                updateStats();
+                closeMealModal();
+                
+                saveBtn.textContent = originalText;
+            }, 500);
+        });
+
+        function resetAllData() {
+            const confirmMessage = 'ATENÇÃO: Esta ação irá apagar todos os seus dados!\n\n' +
+                                 '• Todas as refeições personalizadas\n' +
+                                 '• Histórico de refeições marcadas\n' +
+                                 '• Configurações personalizadas\n\n' +
+                                 'Esta ação NÃO pode ser desfeita!\n\n' +
+                                 'Tem certeza que deseja continuar?';
+                                 
+            if (confirm(confirmMessage)) {
+                localStorage.removeItem('bulkTrackerMeals');
+                localStorage.removeItem('bulkTrackerChecked');
+                localStorage.removeItem('bulkTrackerSettings');
+                
+                meals = [...defaultMeals];
+                dailyChecked = {};
+                settings = {
+                    calorieGoal: 3200,
+                    proteinGoal: 130,
+                    notifications: true
+                };
+                
+                saveData();
+                loadSettings();
+                renderTodayMeals();
+                renderCustomMeals();
+                updateProgress();
+                updateStats();
+                
+                showNotification('Dados resetados com sucesso! O app foi restaurado ao estado inicial.', 'success');
+            }
+        }
+
+        // Verificar parâmetros URL para ações diretas
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            
+            if (action === 'add') {
+                openMealModal();
+            } else if (action === 'mark') {
+                showTab('today');
+            }
+        });
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('mealModal');
+            if (event.target === modal) {
+                closeMealModal();
+            }
+        }
+
+        // Salvar configurações automaticamente
+        document.getElementById('calorieGoal').addEventListener('change', function() {
+            saveSettings();
+            updateProgress();
+        });
+
+        document.getElementById('proteinGoal').addEventListener('change', function() {
+            saveSettings();
+        });
+
+        document.getElementById('notificationsToggle').addEventListener('change', function() {
+            saveSettings();
+            
+            if (this.checked && 'Notification' in window) {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        showNotification('Notificações ativadas! 🔔', 'success');
+                        scheduleNotifications();
+                    }
+                });
+            }
+        });
+
+        // Função para agendar notificações
+        function scheduleNotifications() {
+            if (!('serviceWorker' in navigator) || !settings.notifications) {
+                return;
+            }
+
+            // Agendar notificações para os horários das refeições
+            meals.forEach((meal, index) => {
+                const [hour, minute] = meal.time.split(':');
+                
+                // Calcular próximo horário da refeição
+                const now = new Date();
+                const mealTime = new Date();
+                mealTime.setHours(parseInt(hour), parseInt(minute), 0, 0);
+                
+                if (mealTime <= now) {
+                    mealTime.setDate(mealTime.getDate() + 1);
+                }
+                
+                const timeUntilMeal = mealTime.getTime() - now.getTime();
+                
+                setTimeout(() => {
+                    if ('serviceWorker' in navigator && 'PushManager' in window) {
+                        navigator.serviceWorker.ready.then(registration => {
+                            registration.showNotification('Hora da refeição! 🍽️', {
+                                body: `${meal.name} - ${meal.calories} kcal`,
+                                icon: './icon-192x192.png',
+                                badge: './badge-72x72.png',
+                                tag: `meal-${index}`,
+                                vibrate: [200, 100, 200],
+                                actions: [
+                                    {
+                                        action: 'mark-complete',
+                                        title: 'Marcar como feito'
+                                    }
+                                ]
+                            });
+                        });
+                    }
+                }, timeUntilMeal);
+            });
+        }
+
+        // Controle de conexão
+        window.addEventListener('online', function() {
+            showNotification('Conexão restaurada! 🌐', 'success');
+        });
+
+        window.addEventListener('offline', function() {
+            showNotification('Você está offline. O app continuará funcionando! 📱', 'info');
+        });
+
+        // Inicializar notificações se permitidas
+        if ('Notification' in window && Notification.permission === 'granted' && settings.notifications) {
+            scheduleNotifications();
+        }
+    </script>
+</body>
+</html>
